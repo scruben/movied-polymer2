@@ -1,0 +1,55 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+
+<dom-module id="my-view3">
+  <template>
+    <style include="shared-styles">
+      h3 {
+        color: #FFF;
+      }
+      .container-flex {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        width: 99%;
+        overflow-x: scroll;
+      }
+      iron-image {
+        margin: 10px;
+      }
+
+    </style>
+    
+    <h3>{{my-title}}</h3>
+
+    <iron-ajax
+    auto
+    url="https://movied.herokuapp.com/{{my-category}}"
+    handle-as="json"  
+    on-response="handleResponse"
+    debounce-duration="300"></iron-ajax>
+
+    
+    <div class="container-flex">
+      <template is="dom-repeat" items="{{movies}}">
+        <a href="/movie/{{item.id}}">
+        <iron-image src="https://image.tmdb.org/t/p/w300{{item.poster_path}}" 
+        style="width:232px; height:345px" sizing="cover"></iron-image></a>
+      </template>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view3',
+      ready: function () {
+      },
+      handleResponse: function (event) {
+        this.movies = event.detail.response;
+      }
+    });
+  </script>
+</dom-module>

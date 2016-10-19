@@ -1,0 +1,117 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../bower_components/star-rating/star-rating.html">
+<link rel="import" href="../bower_components/icon-rate/icon-rate.html">
+
+<dom-module id="my-view2">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+     .orange {
+    --icon-rate-filled: {
+      color: #D87800;
+    };
+
+    --icon-rate-empty: {
+      color: #EEEEEE;
+    };
+
+  };
+
+      #principal {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: #1A1A1A;
+      }
+
+      h1 {
+        color: #EEEEEE;
+        padding-top: 20px;
+      }
+
+      h3 {
+        color: #848484;
+      }
+
+      p {
+        color: #EEEEEE;
+      }
+
+      #secundario {
+        padding: 20px;
+        background-color: #1F1F1F;
+        color: #EEEEEE;
+        font-size: 20px;
+        margin-top: 40px;
+      }
+
+      #poster {
+        padding: 20px;
+        margin-right: 20px;
+      }
+      #info {
+        margin-left: 20px;
+        padding-bottom: 20px;
+      }
+
+
+    </style>
+
+    <iron-ajax
+    auto
+    url="https://movied.herokuapp.com/movie/{{movieId}}"
+    handle-as="json"
+    on-response="handleResponse"
+    debounce-duration="300"></iron-ajax>
+    
+    <div id="principal">
+      <div id="poster"><iron-image src="https://image.tmdb.org/t/p/w300{{movie.poster_path}}" 
+      style="width:232px; height:345px" sizing="cover"></iron-image></div>
+      <div id="info">
+        <h1>{{movie.title}}</h1>
+        <h3>{{movie.tagline}}</h3>
+        <p> <span style="color:#848484">Production company: </span> {{movie.production_company}}</p>
+        <p> <span style="color:#848484">Genre: </span> {{movie.genre}}</p>
+        <icon-rate rate="{{movie.fivestarrat}}" end="5" icon="icons:star" class="orange"></icon-rate>
+      </div>
+    </div>
+
+    <div id="secundario">
+    {{movie.overview}}
+    </div>
+
+   
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view2',
+      attached: function () {
+      },
+      handleResponse: function (event) {
+        var response = event.detail.response;
+        this.movie = Object.assign({}, 
+          response, 
+          {production_company: response.production_companies[0].name,
+            genre: response.genres[0].name,
+            fivestarrat: Math.round(response.vote_average/2)
+          });
+      },
+    });
+  </script>
+</dom-module>
